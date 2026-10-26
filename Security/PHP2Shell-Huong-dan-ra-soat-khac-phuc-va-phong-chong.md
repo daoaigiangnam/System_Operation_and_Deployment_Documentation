@@ -268,6 +268,75 @@ Thông báo ảnh hưởng dự kiến, người phụ trách, thời điểm, c
 
 ---
 
+## 6.5. Nguyên tắc cập nhật để giảm tối đa nguy cơ ảnh hưởng hệ thống đang chạy
+
+> **Không có thao tác cập nhật nào được bảo đảm tuyệt đối không ảnh hưởng.** Mục tiêu là giới hạn phạm vi thay đổi, phát hiện sớm lỗi tương thích và có phương án khôi phục đã kiểm chứng.
+
+### A. Phân biệt vá bảo mật với nâng cấp hệ điều hành
+
+- **Ưu tiên 1:** Cài bản vá bảo mật được nhà cung cấp hỗ trợ cho đúng bản Ubuntu/Debian/OS và nhánh PHP đang sử dụng, nếu bản vá đó đáp ứng advisory.
+- **Ưu tiên 2:** Nếu không có bản vá phù hợp hoặc nhánh PHP đã hết hỗ trợ, đánh giá nâng cấp nhánh PHP/nguồn cung cấp PHP có hỗ trợ bảo mật; phải kiểm tra tương thích ứng dụng và thư viện.
+- **Ưu tiên 3:** Chỉ nâng cấp major release của hệ điều hành khi có yêu cầu vòng đời/hỗ trợ hoặc là phương án được nhà cung cấp khuyến nghị và đã có kế hoạch migration riêng.
+- Không chạy `do-release-upgrade`, `apt full-upgrade` hoặc `dist-upgrade` một cách máy móc chỉ để xử lý một CVE PHP.
+- Không thêm PPA/repository bên thứ ba hoặc tải package thủ công để ép lên một số phiên bản mà chưa đánh giá nguồn gốc, dependency và khả năng hỗ trợ.
+
+**Lưu ý:** bản vá ở cấp package vẫn có thể cập nhật thư viện phụ thuộc, thay đổi ABI hoặc yêu cầu restart service. “Chỉ cập nhật PHP” không đồng nghĩa “chỉ một package thay đổi”.
+
+### B. Quy trình thay đổi an toàn cho production
+
+1. **Lập baseline:** ghi OS/release, package PHP và extension, nguồn repository, service, cấu hình, phiên bản ứng dụng, trạng thái website và log lỗi hiện tại.
+2. **Xác định đúng runtime:** phân biệt PHP CLI, PHP-FPM, Apache mod_php, PHP trong control panel và PHP trong container. Không cập nhật một runtime rồi bỏ sót runtime khác.
+3. **Đọc advisory của nhà cung cấp:** xác nhận package/release đã được vá; không chỉ so sánh kết quả `php -v` với số phiên bản upstream.
+4. **Sao lưu và xác minh khôi phục:** backup code, cấu hình, dữ liệu và các file upload theo chính sách; với máy ảo/container, chuẩn bị snapshot/image hoặc artifact cũ. Với database đang ghi, snapshot phải nhất quán theo hướng dẫn nền tảng; snapshot ổ đĩa đơn lẻ không phải lúc nào cũng là backup DB hợp lệ.
+5. **Mô phỏng transaction APT:** chạy `apt update`, sau đó dùng `apt-get -s` để xem trước package sẽ cài/nâng cấp/gỡ bỏ. Đọc kỹ mọi dependency, kernel, web server, thư viện hệ thống và package không liên quan PHP. Nếu có gỡ package ngoài dự kiến, thay đổi diện rộng hoặc xung đột dependency, **dừng và điều tra**, không xác nhận cập nhật.
+6. **Kiểm thử ngoài production:** ưu tiên staging được dựng gần với production, dùng cùng OS/repository, PHP extension, cấu hình và artifact ứng dụng. Kiểm thử chức năng trọng yếu, cron/queue, upload/import, session, kết nối DB và tích hợp bên ngoài.
+7. **Phê duyệt thay đổi:** ghi rõ phạm vi package, thời gian, người chịu trách nhiệm, kiểm thử, điều kiện dừng, phương án rollback và người có quyền quyết định.
+8. **Triển khai theo phạm vi nhỏ nhất:** cập nhật package đã xác định và cần thiết theo advisory; nếu hệ thống có nhiều node, triển khai canary/rolling từng node khi kiến trúc cho phép. Không áp dụng rolling update nếu ứng dụng hoặc DB không hỗ trợ.
+9. **Xác minh ngay sau cập nhật:** kiểm tra package/runtime, trạng thái service, log, health check và chức năng nghiệp vụ. Theo dõi tăng cường sau khi đưa vào hoạt động.
+10. **Đóng change hoặc rollback:** chỉ đóng khi đạt cả yêu cầu bảo mật và nghiệp vụ. Nếu lỗi vượt ngưỡng đã định, dừng rollout, giảm phạm vi ảnh hưởng và thực hiện phương án khôi phục đã được kiểm chứng.
+
+### C. Xem trước thay đổi trên Ubuntu/Debian
+
+Sau khi cập nhật metadata:
+
+```bash
+sudo apt update
+sudo apt-get -s upgrade
+```
+
+Lệnh mô phỏng `apt-get -s upgrade` cho thấy phạm vi cập nhật tổng quát, nhưng **không tự chứng minh rằng tất cả thay đổi đều an toàn**. Đọc danh sách package sẽ thay đổi, package bị giữ lại và package bị gỡ bỏ.
+
+Nếu muốn giới hạn vào các package PHP đang có, trước hết lập danh sách package PHP thực tế:
+
+```bash
+dpkg-query -W -f='${binary:Package}\t${Version}\n' 'php*' 2>/dev/null
+```
+
+Sau đó chọn đúng tên package đã cài và được nhà cung cấp xác nhận cần cập nhật. Ví dụ minh họa — phải thay bằng package thực tế trên máy:
+
+```bash
+sudo apt-get -s install --only-upgrade php8.2-cli php8.2-fpm php8.2-common
+```
+
+Chỉ khi mô phỏng cho thấy thay đổi phù hợp, đã đánh giá dependency và được phê duyệt mới thực hiện lệnh thật tương ứng. Tên package ví dụ không phải danh sách dùng chung cho mọi hệ thống; cần xem xét các extension/runtime khác đang cài. Tùy dependency và repository, ngay cả thao tác giới hạn package cũng có thể nâng cấp thêm thư viện phụ thuộc.
+
+Không dùng `-y` để bỏ qua bước xem xét trên production. Nếu cần cập nhật các bản vá bảo mật khác của OS, thực hiện theo quy trình patch management của tổ chức, không trộn với một lần thay đổi PHP chưa được đánh giá.
+
+### D. Quy tắc rollback
+
+- Xác định trước **điều kiện rollback**: health check thất bại, HTTP 5xx tăng, chức năng trọng yếu lỗi, service không khởi động hoặc lỗi tương thích vượt ngưỡng.
+- Ưu tiên khôi phục bằng image/release đã biết tốt hoặc snapshot nhất quán đã kiểm thử, theo runbook của nền tảng.
+- Không mặc định rằng chạy `apt install package=old-version` là đủ: phiên bản cũ có thể không còn trong repository, dependency đã thay đổi và hạ cấp package có thể không an toàn.
+- Khôi phục snapshot toàn máy có thể làm mất dữ liệu phát sinh sau thời điểm snapshot; phải đánh giá tính nhất quán và kế hoạch phục hồi dữ liệu trước khi thực hiện.
+- **Không quay lại runtime dễ bị khai thác như giải pháp lâu dài.** Nếu rollback là cần thiết để khôi phục dịch vụ, phải áp dụng biện pháp giảm thiểu đã được phê duyệt, giới hạn phơi bày, ghi nhận người chấp nhận rủi ro và đặt thời hạn khắc phục.
+- Với container, lưu image digest trước triển khai và có thể quay lại artifact trước đó theo quy trình deployment; nhưng không rollback về image có lỗ hổng mà không có kiểm soát rủi ro.
+
+### E. Khi không có staging hoặc không thể trì hoãn bản vá critical
+
+Với lỗ hổng RCE nghiêm trọng trên hệ thống Internet-facing, không được để thử nghiệm trở thành lý do trì hoãn vô thời hạn. Người phụ trách cần đánh giá mức phơi bày, biện pháp giảm thiểu tạm thời, khả năng cô lập/giới hạn truy cập và thời gian bảo trì khẩn cấp. Nếu buộc phải triển khai trực tiếp production, cần phê duyệt khẩn cấp, backup đã xác minh, phạm vi thay đổi nhỏ nhất, kiểm tra sau cập nhật và người trực xử lý rollback. Ghi rõ rủi ro còn lại nếu chưa thể vá.
+
+---
+
 ## 7. Bước 3 — Khắc phục trên Ubuntu/Debian dùng package hệ điều hành
 
 > Phần này chỉ phù hợp khi PHP được quản lý bởi APT. Nếu dùng PPA bên thứ ba, Ondřej Surý PPA, aaPanel, Plesk, build thủ công hoặc container, hãy dùng công cụ của đúng nhà cung cấp và đọc advisory của họ. Không trộn nhiều nguồn package để chạy theo một con số phiên bản.
