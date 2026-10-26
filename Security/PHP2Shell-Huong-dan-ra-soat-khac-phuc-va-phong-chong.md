@@ -106,6 +106,12 @@ Theo thông báo chính thức PHP và cơ quan an ninh mạng Singapore, hai l�
 7. Hướng dẫn CSA giám sát dấu hiệu xâm nhập (PDF liên kết trong cảnh báo CSA):  
    https://www.csa.gov.sg/alerts-and-advisories/alerts/al-2026-151/
 
+### 2.3 Cập nhật advisory liên quan sau ngày công bố
+
+Ngày 23/10/2026, PHP đăng thông báo bổ sung về một đường RCE hiếm gặp liên quan đến session upload progress trong tổ hợp cấu hình đặc biệt; PHP cho biết sẽ phát hành advisory riêng ở bản bugfix kế tiếp. Vì vậy, tại thời điểm thực hiện runbook, hãy kiểm tra thông báo mới nhất trên PHP.net, cân nhắc đặt `session.upload_progress.enabled=0` nếu phù hợp và kiểm thử tác động đến ứng dụng. Thông báo bổ sung này **không thay thế yêu cầu cập nhật bản vá cho CVE-2026-109618 và CVE-2026-109619**.
+
+Nguồn chính thức: https://www.php.net/archive/2026.php
+
 ### 2.2 Phiên bản upstream đã sửa trong đợt công bố ban đầu
 
 | Nhánh PHP | Phiên bản upstream đã vá |
@@ -422,20 +428,26 @@ Lưu ý lệnh này phản ánh CLI. Với FPM, kiểm tra cấu hình service/p
 
 Sau thay đổi, restart mọi worker PHP liên quan như mục 9. Kiểm tra ứng dụng có phụ thuộc tính năng upload progress hay không.
 
-### 8.2 Giới hạn kích thước POST/upload tại lớp phù hợp
+### 8.2 Giảm nguy cơ OOM và giới hạn request
 
-PHP upstream đề nghị giảm bề mặt rủi ro từ đường OOM bằng các giới hạn request; ví dụ, nếu ứng dụng không cần upload, cân nhắc `post_max_size = 8M`; nếu cần upload, ví dụ `32M` có thể là điểm bắt đầu để đánh giá. Đây **không phải giá trị áp dụng cho mọi hệ thống**: phải dựa trên yêu cầu nghiệp vụ, và kiểm tra `upload_max_filesize` thấp hơn `post_max_size`.
+Theo advisory upstream cho CVE-2026-109618, nếu chưa thể cập nhật ngay, biện pháp cấu hình được nêu là đặt `memory_limit=-1` theo cách ứng dụng không thể ghi đè (ví dụ cấu hình quản trị phù hợp của Apache hoặc PHP-FPM), đồng thời kiểm tra không có cấu hình theo pool/directory/ứng dụng đặt lại giới hạn hữu hạn. **Đây chỉ là biện pháp giảm thiểu tạm thời, không phải bản vá hoàn chỉnh**: lỗi cấp phát bộ nhớ ở tầng hệ điều hành vẫn có thể dẫn đến đường xử lý dễ bị ảnh hưởng. Tắt giới hạn bộ nhớ PHP cũng có thể làm tăng rủi ro cạn tài nguyên và ảnh hưởng tính sẵn sàng, vì vậy không áp dụng đại trà mà chưa đánh giá tải, giới hạn hệ điều hành/container, mức phơi bày và được người phụ trách phê duyệt.
 
-Đồng thời xem xét giới hạn tại web server/reverse proxy đối với kích thước request sau giải mã, số trường đầu vào, số phần multipart, số header và độ sâu lồng nhau. Các giới hạn phải có hiệu lực cả khi request không có `Content-Length` đáng tin cậy.
+Ngoài ra, giữ `post_max_size` ở mức thấp nhất đáp ứng nhu cầu thực tế và bảo đảm `upload_max_filesize` thấp hơn `post_max_size`. Không sao chép giá trị mẫu như `8M` hoặc `32M` lên production nếu chưa kiểm tra yêu cầu upload/import của ứng dụng.
 
-Không thay đổi giới hạn upload trên production mà chưa kiểm tra luồng nghiệp vụ: upload tài liệu, ảnh, import Excel/CSV, biểu mẫu và API.
+Ở lớp reverse proxy/web server, cân nhắc giới hạn kích thước request **sau giải mã**, số phần multipart, số header trong từng phần, số trường đầu vào và độ sâu lồng nhau. Nếu ứng dụng không sử dụng upload/multipart, có thể chặn loại request đó ở frontend trước khi đến PHP. Các giới hạn phải phù hợp với luồng nghiệp vụ và không được coi là thay thế bản vá.
+
+Không dùng `RLIMIT_AS` hoặc `RLIMIT_DATA` như biện pháp thay thế `memory_limit`; các giới hạn này có thể khiến `mmap()` thất bại và kích hoạt đường xử lý OOM liên quan. Giới hạn cgroup/container có thể là hàng rào bảo vệ tính sẵn sàng nhưng cũng không phải bản vá hoàn chỉnh.
+
+**Trước khi thay đổi:** thử trên staging, kiểm tra các luồng upload/import/API, theo dõi mức dùng RAM và xác định cách khôi phục cấu hình. Không chỉnh các giới hạn trên production nếu chưa biết ứng dụng phụ thuộc vào chúng như thế nào.
 
 ### 8.3 Các biện pháp giảm thiểu khác theo PHP upstream
 
-- Trên PHP 8.5, advisory nêu `fatal_error_backtraces=0` cho một đường khai thác cụ thể của CVE-2026-109619.
-- Loại bỏ cấu hình không hợp lệ/đã deprecated được áp dụng theo từng request mà có thể phát sinh diagnostic trước khi khởi tạo hoàn tất.
-- Sửa các fatal error/timeout mà người dùng bên ngoài có thể kích hoạt, nhất là trong callback, upload/import và cleanup.
-- Giới hạn tài nguyên ở mức container/cgroup như một hàng rào khả dụng, theo thiết kế phù hợp. Không tùy tiện dùng `RLIMIT_AS` hoặc `RLIMIT_DATA` làm giải pháp thay thế vì có thể gây lỗi cấp phát bộ nhớ liên quan đến đường khai thác.
+- Với PHP 8.5 chưa thể cập nhật, advisory cho CVE-2026-109619 nêu `fatal_error_backtraces=0` để loại bỏ producer được dùng trong trường hợp RCE đã xác nhận. Biện pháp này không bao phủ mọi trạng thái nội bộ/extension.
+- Với đường khai thác liên quan vòng đời session của CVE-2026-109619, đặt `session.upload_progress.enabled=0` trong cấu hình quản trị có hiệu lực trước khi xử lý request, rồi restart mọi worker liên quan. Đây không phải biện pháp bao phủ mọi đường khai thác.
+- PHP phát hành thông báo bổ sung ngày 23/10/2026 đề nghị tạm đặt `session.upload_progress.enabled=0` cho đến bản bugfix release kế tiếp để giảm một đường RCE hiếm gặp khác, chỉ xuất hiện với tổ hợp cấu hình `session.serialize_handler` và `ini_set()` đặc biệt. Kiểm tra advisory chính thức mới nhất trước khi quyết định thời điểm gỡ cấu hình này.
+- Loại bỏ cấu hình INI không hợp lệ, xung đột hoặc đã deprecated có thể phát sinh diagnostic trước khi request initialization hoàn tất. Ưu tiên cấu hình startup được quản trị tập trung; không dựa vào `ini_set()` hoặc `.user.ini` cho biện pháp cần có hiệu lực trước khi request được khởi tạo.
+- Sửa các fatal error/timeout mà người dùng bên ngoài có thể kích hoạt, đặc biệt trong callback, upload/import, error handling, shutdown và cleanup. Bật log phù hợp trong đợt audit; việc không thấy lỗi trong log không chứng minh hệ thống an toàn.
+- Có thể cân nhắc `pm.max_requests=1` như biện pháp giảm thời gian sống của worker nếu phù hợp hiệu năng, nhưng không coi việc recycle worker là bản vá hay giải pháp đầy đủ.
 
 Tham khảo nguyên văn hướng dẫn cập nhật tại: https://www.php.net/archive/2026.php#2026-10-21-5
 
