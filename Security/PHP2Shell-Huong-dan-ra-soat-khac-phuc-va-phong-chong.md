@@ -372,17 +372,21 @@ sudo apt-get -s upgrade
 
 Đọc danh sách cài/nâng cấp/gỡ bỏ. Nếu có thay đổi lớn hoặc gỡ package không mong đợi, dừng lại để điều tra.
 
-### 7.4 Nâng cấp các package PHP đã cài
+### 7.4 Thực hiện cập nhật có kiểm soát
 
-Cách an toàn tổng quát là nâng cấp các package PHP hiện hữu sau khi xác nhận repository đã có bản vá. Có thể dùng:
+**Không mặc định chạy `sudo apt upgrade` để xử lý riêng lỗ hổng PHP.** Lệnh này có thể cập nhật nhiều package của hệ điều hành cùng lúc, kéo theo thay đổi thư viện, dịch vụ hoặc yêu cầu restart. Hãy áp dụng quy trình ở mục 6.5 và chỉ thực hiện sau khi đã xem trước transaction.
+
+Nếu advisory xác nhận bản vá nằm trong các package PHP hiện có, chọn đúng package/runtime đã cài và mô phỏng trước. Ví dụ minh họa — thay tên package theo inventory thực tế:
 
 ```bash
-sudo apt upgrade
+sudo apt-get -s install --only-upgrade php8.2-cli php8.2-fpm php8.2-common
 ```
 
-Lệnh này có thể cập nhật nhiều package bảo mật của hệ điều hành, không chỉ PHP. Đọc kỹ kế hoạch và bảo đảm backup/cửa sổ bảo trì. Nếu chính sách yêu cầu thay đổi giới hạn, chỉ định rõ các gói PHP liên quan đã được xác minh thay vì sao chép một danh sách gói mẫu.
+Đọc toàn bộ kết quả mô phỏng. Nếu có gỡ package, thay đổi ngoài phạm vi dự kiến, dependency xung đột hoặc chưa hiểu tác động, **dừng lại** và chuyển cho quản trị viên phụ trách. Nếu mô phỏng hợp lý, đã có backup/rollback, kiểm thử và phê duyệt, thực hiện lệnh tương ứng bằng cách bỏ `-s`.
 
-Không chạy `apt full-upgrade` một cách máy móc trên production mà chưa xem xét các gói bị thay/gỡ.
+Danh sách package trên chỉ là ví dụ, không dùng nguyên trạng cho mọi máy chủ. Phải bao phủ đúng runtime và extension có liên quan; package phụ thuộc vẫn có thể cần thay đổi. Nếu nhà cung cấp yêu cầu cập nhật thêm package hệ điều hành để nhận bản vá hoặc bảo đảm an toàn, xử lý theo một change OS patching riêng đã được đánh giá, thay vì gộp thay đổi rộng vào lần xử lý PHP mà chưa kiểm thử.
+
+Không chạy `apt full-upgrade`, `dist-upgrade` hoặc nâng cấp major release OS một cách máy móc trên production.
 
 ### 7.5 Nếu hệ thống vẫn chưa có bản vá
 
