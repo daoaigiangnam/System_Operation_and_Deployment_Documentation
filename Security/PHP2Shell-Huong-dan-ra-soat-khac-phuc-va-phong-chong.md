@@ -10,6 +10,72 @@
 
 ---
 
+## Minh họa trực quan
+
+Các sơ đồ dưới đây dùng Mermaid, được GitHub render trực tiếp trong trang Markdown nên không cần tải ảnh riêng. Sơ đồ mô tả kiến trúc và quy trình vận hành ở mức khái quát; không phải bằng chứng kiểm thử khai thác.
+
+### Hình 1 — Luồng request và vị trí cần rà soát
+
+```mermaid
+flowchart LR
+    U[Người dùng / Internet] --> W[Web server<br/>Nginx hoặc Apache]
+    W --> R{Cách chạy PHP}
+    R -->|PHP-FPM / FastCGI| F[PHP-FPM worker]
+    R -->|mod_php| A[Apache worker có PHP]
+    R -->|Container| C[PHP runtime trong container]
+    F --> APP[Ứng dụng PHP / WordPress]
+    A --> APP
+    C --> APP
+    APP --> DB[(Database / dịch vụ nội bộ)]
+    V[PHP runtime chưa vá] -. Rủi ro .-> F
+    V -. Rủi ro .-> A
+    V -. Rủi ro .-> C
+    classDef risk fill:#ffe1e1,stroke:#b42318,color:#7a271a;
+    class V risk;
+```
+
+**Ý nghĩa:** cần xác định PHP runtime thực sự xử lý request. Cập nhật PHP CLI trên host không nhất thiết cập nhật PHP-FPM, Apache mod_php hoặc runtime nằm trong container.
+
+### Hình 2 — Quy trình xử lý PHP2Shell
+
+```mermaid
+flowchart TD
+    S([Bắt đầu]) --> I[Lập inventory: host, website, PHP runtime]
+    I --> P[Đối chiếu advisory của PHP / nhà cung cấp OS]
+    P --> B[Sao lưu, kiểm tra tương thích, mở change]
+    B --> Q{Có bản vá được hỗ trợ?}
+    Q -->|Có| U[Cập nhật package hoặc image đã vá]
+    Q -->|Chưa| M[Giảm thiểu tạm thời và hạn chế phơi bày]
+    M --> T[Theo dõi và tiếp tục tìm bản vá]
+    T --> Q
+    U --> R[Restart/redeploy tất cả worker/runtime liên quan]
+    R --> V[Xác minh package, service, website và log]
+    V --> D{Có dấu hiệu xâm nhập?}
+    D -->|Có / nghi ngờ cao| IR[Cô lập phù hợp, bảo toàn bằng chứng, ứng phó sự cố]
+    D -->|Không thấy dấu hiệu| C[Hoàn tất checklist và theo dõi tăng cường]
+    IR --> E([Kết thúc khi đã xử lý sự cố])
+    C --> E
+```
+
+### Hình 3 — Cây quyết định sau khi kiểm tra máy chủ
+
+```mermaid
+flowchart TD
+    A[Đã kiểm tra đúng PHP runtime?] -->|Chưa| B[Xác định FPM, mod_php, CGI hoặc container]
+    B --> A
+    A -->|Rồi| C[Đối chiếu bản vá của đúng nhà cung cấp]
+    C --> D{Đã có bản vá hiệu lực?}
+    D -->|Chưa| E[Giảm thiểu tạm thời, giới hạn truy cập, ưu tiên vá]
+    D -->|Có| F[Triển khai bản vá và restart/redeploy]
+    F --> G[Kiểm thử website, API, upload, session và log]
+    G --> H{Có dấu hiệu xâm nhập?}
+    H -->|Có / chưa rõ| I[Chuyển quy trình ứng phó sự cố]
+    H -->|Không phát hiện| J[Ghi bằng chứng và theo dõi]
+    E --> K[Đặt hạn xử lý và tiếp tục theo dõi]
+```
+
+---
+
 ## 1. Tóm tắt điều hành
 
 PHP2Shell là tên gọi được sử dụng cho hai lỗ hổng nghiêm trọng trong PHP, được công bố ngày 21/10/2026:
