@@ -7,6 +7,8 @@
 
 > Tài liệu ghi nhận thao tác thực tế và kết quả đã quan sát trong quá trình triển khai. Các bước đồng bộ Google Directory/Groups và kết nối OIDC với KPI Dashboard chưa được thực hiện trong giai đoạn này.
 
+![Sơ đồ kiến trúc Google Workspace – Authentik – ứng dụng MSTAR](./images/google-workspace-authentik-sso-architecture.svg)
+
 ## 1. Mục tiêu và kiến trúc
 
 Mục tiêu là để nhân viên sử dụng tài khoản Google Workspace hiện có để đăng nhập Authentik. Authentik đóng vai trò Identity Provider/Broker cho các ứng dụng nội bộ. Ứng dụng vẫn tự quản lý quyền nghiệp vụ của mình.
