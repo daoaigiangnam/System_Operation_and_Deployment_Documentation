@@ -1,4 +1,4 @@
-# 09 — DATA MODEL & ERD
+# 09 — MÔ HÌNH DỮ LIỆU VÀ SƠ ĐỒ ERD
 
 ## 1. Modeling principles
 
