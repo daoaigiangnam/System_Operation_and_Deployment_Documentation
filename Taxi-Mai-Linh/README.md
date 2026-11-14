@@ -67,6 +67,8 @@ Bản 1.0 bổ sung đặc tả triển khai chi tiết cho bản nền tảng 0
 - ![Control Tower](./assets/02-control-tower-wireframe.svg)
 - ![Call Center](./assets/03-call-center-booking-wireframe.svg)
 - ![Driver App](./assets/04-driver-app-wireframe.svg)
+- [Logical architecture diagram](./assets/05-logical-architecture.svg)
+- [Booking–Dispatch–Trip sequence diagram](./assets/06-booking-dispatch-trip-sequence.svg)
 
 Wireframes are conceptual references, not production Figma prototypes. Maps and sample data are illustrative.
 
