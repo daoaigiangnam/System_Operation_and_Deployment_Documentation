@@ -1,14 +1,14 @@
-# Assets — SVG Wireframes & Diagrams
+# HÌNH ẢNH VÀ SƠ ĐỒ SVG
 
-Original SVG assets in this documentation set.
+Các hình và sơ đồ SVG gốc trong bộ tài liệu:
 
-| File | Description |
+| Tệp | Mô tả |
 |---|---|
-| [01-system-context.svg](./01-system-context.svg) | System context and actors |
-| [02-control-tower-wireframe.svg](./02-control-tower-wireframe.svg) | Dispatcher live map/control tower |
-| [03-call-center-booking-wireframe.svg](./03-call-center-booking-wireframe.svg) | Call center booking workspace |
-| [04-driver-app-wireframe.svg](./04-driver-app-wireframe.svg) | Driver app operational states |
-| [05-logical-architecture.svg](./05-logical-architecture.svg) | Logical architecture and bounded contexts |
-| [06-booking-dispatch-trip-sequence.svg](./06-booking-dispatch-trip-sequence.svg) | Booking, dispatch, driver offer and trip sequence |
+| [01-system-context.svg](./01-system-context.svg) | Sơ đồ bối cảnh hệ thống và các nhóm người dùng |
+| [02-control-tower-wireframe.svg](./02-control-tower-wireframe.svg) | Bản phác thảo bản đồ trực tiếp và trung tâm điều hành |
+| [03-call-center-booking-wireframe.svg](./03-call-center-booking-wireframe.svg) | Bản phác thảo màn hình tiếp nhận booking của tổng đài |
+| [04-driver-app-wireframe.svg](./04-driver-app-wireframe.svg) | Bản phác thảo các trạng thái ứng dụng tài xế |
+| [05-logical-architecture.svg](./05-logical-architecture.svg) | Sơ đồ kiến trúc logic và các miền nghiệp vụ |
+| [06-booking-dispatch-trip-sequence.svg](./06-booking-dispatch-trip-sequence.svg) | Sơ đồ tuần tự đặt xe, điều phối, lời mời tài xế và chuyến đi |
 
-SVGs are editable vector concepts, not approved production UI or live map data. Final design must be validated in a Figma prototype with representative users. Architecture is a logical reference and does not select a production technology stack.
+SVG có thể chỉnh sửa bằng công cụ hỗ trợ đồ họa vector. Đây là bản phác thảo, không phải giao diện sản xuất đã nghiệm thu hoặc dữ liệu bản đồ trực tiếp. Kiến trúc trong hình chỉ ở mức logic, chưa lựa chọn công nghệ triển khai chính thức.
