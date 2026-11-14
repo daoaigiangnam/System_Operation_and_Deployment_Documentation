@@ -1,6 +1,6 @@
 # Assets — SVG Wireframes & Diagrams
 
-Original SVG assets included in this documentation set.
+Original SVG assets in this documentation set.
 
 | File | Description |
 |---|---|
@@ -9,4 +9,4 @@ Original SVG assets included in this documentation set.
 | 03-call-center-booking-wireframe.svg | Call center booking workspace |
 | 04-driver-app-wireframe.svg | Driver app operational states |
 
-The SVGs are editable vector wireframe concepts. They are not approved production UI or live map views. Final design must be validated in a Figma prototype with representative users.
+SVGs are editable vector wireframe concepts, not approved production UI or live map data. Final design must be validated in a Figma prototype with representative users.
