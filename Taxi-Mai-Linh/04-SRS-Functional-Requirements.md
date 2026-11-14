@@ -1,10 +1,10 @@
 # 04 — ĐẶC TẢ YÊU CẦU PHẦN MỀM (SRS)
 
-## 1. Requirement convention
+## 1. Quy ước về yêu cầu
 
 MUST = baseline bắt buộc; SHOULD = ưu tiên cao; MAY = tùy chọn; TBD = cần owner xác nhận. Mọi requirement phải liên kết workflow, screen/API và test case.
 
-## 2. Functional requirements
+## 2. Yêu cầu chức năng
 
 | ID | Module | Requirement | Priority |
 |---|---|---|---|
@@ -55,7 +55,7 @@ MUST = baseline bắt buộc; SHOULD = ưu tiên cao; MAY = tùy chọn; TBD = c
 | RPT-001 | Reporting | Filter by period, branch, channel, fleet and partner | MUST |
 | RPT-002 | Reporting | Drill down KPI to source booking/trip/ledger | MUST |
 
-## 3. Business rules
+## 3. Quy tắc nghiệp vụ
 
 | ID | Rule |
 |---|---|
