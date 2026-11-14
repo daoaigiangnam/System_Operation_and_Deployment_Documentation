@@ -1,46 +1,46 @@
-# Data Migration, Cutover & Rollback Plan
+# 30 — KẾ HOẠCH CHUYỂN ĐỔI DỮ LIỆU, CHUYỂN HỆ THỐNG VÀ QUAY LUI
 
-## 1. Migration principles
-- Inventory all source systems and data owners before mapping.
-- Migrate only approved data required for launch.
-- Preserve source identifiers in crosswalk tables.
-- Validate financial data independently with Finance.
-- Mask personal data in non-production.
-- Do not run destructive source changes during migration rehearsal.
+## 1. Nguyên tắc chuyển đổi
+- Kiểm kê mọi hệ thống nguồn và chủ sở hữu dữ liệu trước khi ánh xạ.
+- Chỉ chuyển dữ liệu đã được duyệt và cần cho ngày phát hành.
+- Giữ mã định danh nguồn trong bảng đối chiếu.
+- Tài chính phải xác nhận độc lập dữ liệu tài chính.
+- Che/ẩn danh dữ liệu cá nhân ở môi trường không sản xuất.
+- Không thực hiện thay đổi phá hủy dữ liệu nguồn trong buổi diễn tập.
 
-## 2. Data domains
-Customers, drivers, vehicles, partner organizations/contracts, tariffs, active bookings, trip history (if required), payment references, balances/settlement open items, users/roles, reference data and audit history. Each domain requires an explicit include/exclude decision.
+## 2. Nhóm dữ liệu
+Khách hàng, tài xế, xe, tổ chức/hợp đồng đối tác, biểu giá, booking đang mở, lịch sử chuyến (nếu cần), mã tham chiếu thanh toán, số dư/khoản đối soát chưa đóng, người dùng/vai trò, dữ liệu danh mục và lịch sử kiểm toán. Mỗi nhóm phải có quyết định đưa vào/loại ra rõ ràng.
 
-## 3. Mapping template
-| Source entity/field | Target entity/field | Transform | Null/default rule | Owner | Validation |
+## 3. Mẫu ánh xạ dữ liệu
+| Thực thể/trường nguồn | Thực thể/trường đích | Quy tắc chuyển đổi | Quy tắc null/mặc định | Chủ sở hữu | Kiểm tra |
 |---|---|---|---|---|---|
-| TBD | TBD | TBD | no silent default | Data owner | count + sample + totals |
+| TBD | TBD | TBD | không tự đặt mặc định | Chủ dữ liệu | số lượng + mẫu + tổng |
 
-## 4. Rehearsal sequence
-1. Freeze mapping and extraction scripts.
-2. Snapshot source and record extraction watermark.
-3. Load reference/master data.
-4. Load contracts/tariffs with effective dates and version history.
-5. Load customer/supply data and crosswalk IDs.
-6. Load open operational/financial items only if approved.
-7. Run referential, duplicate, format, timezone and status checks.
-8. Reconcile record counts and financial totals.
-9. Execute business smoke tests and obtain sign-off.
-10. Record duration, defects and corrected scripts; repeat until stable.
+## 4. Trình tự diễn tập
+1. Khóa bảng ánh xạ và kịch bản trích xuất.
+2. Chụp dữ liệu nguồn và ghi mốc trích xuất.
+3. Nạp dữ liệu danh mục/dữ liệu gốc.
+4. Nạp hợp đồng/biểu giá cùng ngày hiệu lực và lịch sử phiên bản.
+5. Nạp khách hàng/nguồn xe và bảng đối chiếu ID.
+6. Nạp dữ liệu vận hành/tài chính đang mở nếu được duyệt.
+7. Kiểm tra tham chiếu, trùng lặp, định dạng, múi giờ và ánh xạ trạng thái.
+8. Đối soát số bản ghi và tổng tài chính.
+9. Chạy kiểm tra nghiệp vụ và lấy xác nhận.
+10. Ghi thời lượng, lỗi và kịch bản đã sửa; lặp lại đến khi ổn định.
 
-## 5. Cutover pattern
-- Define maintenance/freeze window and customer communication.
-- Take final source snapshot and backup.
-- Apply delta since last successful rehearsal.
-- Switch traffic only after validation gates pass.
-- Monitor booking, dispatch, payment and integration health.
-- Keep source read-only during rollback decision window where feasible.
+## 5. Phương án chuyển hệ thống
+- Xác định thời gian bảo trì/đóng băng và thông báo các bên.
+- Chụp dữ liệu nguồn cuối cùng và sao lưu.
+- Áp dụng phần dữ liệu phát sinh sau lần diễn tập thành công gần nhất.
+- Chỉ chuyển lưu lượng khi các cổng xác nhận đạt.
+- Giám sát booking, điều phối, thanh toán và tích hợp.
+- Giữ hệ thống nguồn ở chế độ chỉ đọc trong cửa sổ quyết định quay lui nếu khả thi.
 
-## 6. Rollback triggers
-Examples requiring pre-approved thresholds: booking creation failure, assignment concurrency defect, financial imbalance, severe security issue, data corruption, unavailable critical provider, or restore/DR failure. Exact thresholds and decision authority are TBD.
+## 6. Điều kiện kích hoạt quay lui
+Ví dụ cần ngưỡng được duyệt trước: tạo booking thất bại, lỗi tranh chấp phân xe, mất cân đối tài chính, lỗi bảo mật nghiêm trọng, hỏng dữ liệu, nhà cung cấp trọng yếu không hoạt động hoặc khôi phục/DR thất bại. Ngưỡng và người có quyền quyết định đang TBD.
 
-## 7. Rollback safety
-Do not blindly reverse external payment/notification effects. Use compensating actions and reconciliation. Preserve all audit evidence. A rollback plan must specify DNS/app rollback, database compatibility, event replay/parking, provider callback handling, and customer/driver communication.
+## 7. An toàn khi quay lui
+Không đảo ngược mù quáng các tác động thanh toán/thông báo bên ngoài. Dùng giao dịch bù trừ và đối soát. Giữ nguyên bằng chứng kiểm toán. Kế hoạch quay lui phải nêu rõ quay lại DNS/ứng dụng, tương thích CSDL, phát lại/giữ sự kiện, xử lý callback nhà cung cấp và thông báo khách/tài xế.
 
-## 8. Sign-off
-Data owners, Finance, Operations, IT and Security sign reconciliation and cutover checklist before GO.
+## 8. Ký xác nhận
+Chủ sở hữu dữ liệu, Tài chính, Vận hành, IT và Bảo mật ký xác nhận đối soát và danh sách chuyển hệ thống trước khi quyết định PHÁT HÀNH.
