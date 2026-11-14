@@ -1,4 +1,4 @@
-# 10 — API & INTEGRATION SPECIFICATION
+# 10 — ĐẶC TẢ API VÀ TÍCH HỢP HỆ THỐNG
 
 ## 1. API conventions
 
