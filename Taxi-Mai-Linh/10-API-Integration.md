@@ -1,6 +1,6 @@
 # 10 — ĐẶC TẢ API VÀ TÍCH HỢP HỆ THỐNG
 
-## 1. API conventions
+## 1. Quy ước API
 
 - REST/JSON over HTTPS unless an approved alternative is documented.
 - Versioned prefix `/api/v1`; OpenAPI is source of truth.
