@@ -1,4 +1,4 @@
-# 11 — ARCHITECTURE, NFR & SECURITY
+# 11 — KIẾN TRÚC, YÊU CẦU PHI CHỨC NĂNG VÀ BẢO MẬT
 
 ## 1. Logical architecture
 
