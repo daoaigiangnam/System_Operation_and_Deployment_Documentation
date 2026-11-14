@@ -1,4 +1,4 @@
-# 06 — DISPATCH & CONTROL TOWER
+# 06 — ĐIỀU PHỐI VÀ TRUNG TÂM ĐIỀU HÀNH
 
 ## 1. Dispatch pipeline
 
