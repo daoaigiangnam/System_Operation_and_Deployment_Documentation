@@ -1,4 +1,4 @@
-# 15 — DECISION REGISTER (TBD)
+# 15 — SỔ ĐĂNG KÝ CÁC QUYẾT ĐỊNH
 
 > Không triển khai policy kinh doanh chưa được owner phê duyệt. Khi chốt, cập nhật Decision, Approver, Approval Date và requirement liên quan.
 
