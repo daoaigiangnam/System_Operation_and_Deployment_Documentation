@@ -4,6 +4,11 @@
 > **Mô hình vận hành:** DIRECT + PARTNER trên một nền tảng điều phối thống nhất.  
 > **Trạng thái:** Cơ sở lập kế hoạch phát triển — chờ phê duyệt nghiệp vụ, tài chính, pháp chế và kiến trúc.
 
+
+## Tài liệu trục chính — đọc trước khi triển khai
+
+- [00A — Thiết kế tổng thể và luồng vận hành hệ thống Taxi Mai Linh](./00A-Thiet-ke-tong-the-va-luong-van-hanh.md): luồng đầu cuối, Swimlane, chuỗi dữ liệu, trạng thái, ngoại lệ, ranh giới DIRECT/PARTNER và thứ tự phân rã Module.
+
 ## Mục tiêu và đối tượng sử dụng
 
 Bộ tài liệu dành cho Ban điều hành, Khối Vận hành, Tài chính, Pháp chế, BA/PO, UX/UI, Kiến trúc sư, Lập trình viên, QA và IT Operations để thống nhất yêu cầu, thiết kế, phát triển, kiểm thử, nghiệm thu và vận hành.
