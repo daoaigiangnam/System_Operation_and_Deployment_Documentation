@@ -30,7 +30,7 @@ Business Objective → BRD → Requirement → Workflow → UI → API/Data → 
 
 ## 4. Coverage tracker template
 
-| Requirement ID | Flow Ref | UI Ref | API/Data Ref | Test Ref | Status | Evidence |
+| Mã yêu cầu | Mã luồng | Mã giao diện | Mã API/Dữ liệu | Mã kiểm thử | Trạng thái | Bằng chứng |
 |---|---|---|---|---|---|---|
 | BKG-001 | WF-01 | UI-01 | Booking | TC-001 | Draft | TBD |
 | DSP-002 | WF-03 | UI-02 | CandidateService | TC-004/005 | Draft | TBD |
