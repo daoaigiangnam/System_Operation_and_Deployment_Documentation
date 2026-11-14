@@ -1,6 +1,6 @@
 # 12 — KIỂM THỬ, NGHIỆM THU NGƯỜI DÙNG VÀ CHẤP NHẬN
 
-## 1. Test strategy
+## 1. Chiến lược kiểm thử
 
 | Layer | Coverage | Evidence |
 |---|---|---|
