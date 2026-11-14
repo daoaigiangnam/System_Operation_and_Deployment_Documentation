@@ -8,6 +8,7 @@
 ## Tài liệu trục chính — đọc trước khi triển khai
 
 - [00A — Thiết kế tổng thể và luồng vận hành hệ thống Taxi Mai Linh](./00A-Thiet-ke-tong-the-va-luong-van-hanh.md): luồng đầu cuối, Swimlane, chuỗi dữ liệu, trạng thái, ngoại lệ, ranh giới DIRECT/PARTNER và thứ tự phân rã Module.
+- [00B — State Machine và quy tắc chuyển trạng thái](./00B-State-Machine-va-quy-tac-chuyen-trang-thai.md): vòng đời Booking, DispatchRun, Offer, Assignment, Trip, Payment, Settlement; guard, concurrency, ánh xạ trạng thái và test.
 
 ## Mục tiêu và đối tượng sử dụng
 
