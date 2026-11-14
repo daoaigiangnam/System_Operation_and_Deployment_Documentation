@@ -1,4 +1,4 @@
-# 00 — EXECUTIVE OVERVIEW
+# 00 — TỔNG QUAN DÀNH CHO LÃNH ĐẠO
 
 ## 1. Tóm tắt
 
