@@ -1,6 +1,6 @@
 # 05 — ĐẶC TẢ GIAO DIỆN VÀ TRẢI NGHIỆM NGƯỜI DÙNG
 
-## 1. Experience goals
+## 1. Mục tiêu trải nghiệm người dùng
 
 - Call Center: fast, accurate booking and location capture.
 - Dispatcher: immediate visibility of pending demand, candidate supply and exceptions.
