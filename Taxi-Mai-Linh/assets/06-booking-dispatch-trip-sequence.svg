@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1040" viewBox="0 0 1440 1040">
+<defs><style>.t{font:700 28px Arial;fill:#12304a}.s{font:15px Arial;fill:#426078}.h{font:700 17px Arial;fill:#12304a}.b{font:15px Arial;fill:#23445c}.lane{fill:#f7fbff;stroke:#9dbbd0;stroke-width:1.5}.line{stroke:#6a879b;stroke-width:2;stroke-dasharray:7 6}.msg{stroke:#1c729f;stroke-width:2.5;fill:none;marker-end:url(#a)}.ret{stroke:#b47a31;stroke-width:2;stroke-dasharray:6 5;fill:none;marker-end:url(#b)}.note{fill:#fff4e8;stroke:#c47a26;stroke-width:1.5;rx:10}</style><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L9 3 L0 6" fill="#1c729f"/></marker><marker id="b" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L9 3 L0 6" fill="#b47a31"/></marker></defs>
+<rect width="1440" height="1040" fill="#fff"/><text x="55" y="55" class="t">BOOKING → DISPATCH → TRIP — SEQUENCE FLOW</text><text x="55" y="84" class="s">Logical interaction • time flows top to bottom • exception policies/thresholds are TBD until approved</text>
+<g>
+<rect x="50" y="120" width="190" height="72" class="lane"/><text x="145" y="150" text-anchor="middle" class="h">Customer / Agent</text><text x="145" y="175" text-anchor="middle" class="s">Channel</text>
+<rect x="290" y="120" width="190" height="72" class="lane"/><text x="385" y="150" text-anchor="middle" class="h">Booking Service</text>
+<rect x="530" y="120" width="190" height="72" class="lane"/><text x="625" y="150" text-anchor="middle" class="h">Dispatch Engine</text>
+<rect x="770" y="120" width="190" height="72" class="lane"/><text x="865" y="150" text-anchor="middle" class="h">Supply Registry</text>
+<rect x="1010" y="120" width="190" height="72" class="lane"/><text x="1105" y="150" text-anchor="middle" class="h">Driver App</text>
+<rect x="1250" y="120" width="150" height="72" class="lane"/><text x="1325" y="150" text-anchor="middle" class="h">Trip / Fare</text>
+</g>
+<g class="line"><path d="M145 192 V980"/><path d="M385 192 V980"/><path d="M625 192 V980"/><path d="M865 192 V980"/><path d="M1105 192 V980"/><path d="M1325 192 V980"/></g>
+<g class="msg">
+<path d="M145 235 H385"/><path d="M385 295 H145"/><path d="M385 355 H625"/><path d="M625 415 H865"/><path d="M865 475 H625"/><path d="M625 535 H1105"/><path d="M1105 595 H625"/><path d="M625 655 H385"/><path d="M1105 715 H1325"/><path d="M1325 775 H385"/><path d="M385 835 H145"/>
+</g>
+<g class="b">
+<text x="260" y="225" text-anchor="middle">1. Create booking</text><text x="260" y="285" text-anchor="middle">2. Reference + state</text><text x="505" y="345" text-anchor="middle">3. Request dispatch</text><text x="745" y="405" text-anchor="middle">4. Query eligible supply</text><text x="745" y="465" text-anchor="middle">5. Candidate snapshot</text><text x="865" y="525" text-anchor="middle">6. Send offer</text><text x="865" y="585" text-anchor="middle">7. Accept / decline</text><text x="505" y="645" text-anchor="middle">8. Commit assignment</text><text x="1215" y="705" text-anchor="middle">9. Trip milestones</text><text x="855" y="765" text-anchor="middle">10. Fare + trip result</text><text x="265" y="825" text-anchor="middle">11. Customer update</text>
+</g>
+<rect x="520" y="865" width="650" height="92" class="note"/><text x="545" y="895" class="h">Atomic acceptance / concurrency guard</text><text x="545" y="923" class="b">Validate offer expiry + booking version + driver/vehicle eligibility;</text><text x="545" y="945" class="b">one winner only; duplicate command returns original result via idempotency.</text>
+<rect x="55" y="980" width="1330" height="42" class="lane"/><text x="720" y="1007" text-anchor="middle" class="b">After completion: payment status → ledger posting → partner settlement (if applicable) → reconciliation and audit</text>
+</svg>
