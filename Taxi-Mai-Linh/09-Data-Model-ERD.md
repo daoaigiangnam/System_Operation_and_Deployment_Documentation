@@ -1,6 +1,6 @@
 # 09 — MÔ HÌNH DỮ LIỆU VÀ SƠ ĐỒ ERD
 
-## 1. Modeling principles
+## 1. Nguyên tắc mô hình hóa dữ liệu
 
 Separate master data, operational transactions, events and financial ledger. Preserve tariff/contract snapshots. Use immutable IDs, UTC timestamps, explicit PII classification and geospatial coordinates with agreed SRID.
 
