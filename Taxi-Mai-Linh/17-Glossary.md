@@ -1,4 +1,4 @@
-# 17 — GLOSSARY
+# 17 — BẢNG THUẬT NGỮ
 
 | Term | Meaning |
 |---|---|
