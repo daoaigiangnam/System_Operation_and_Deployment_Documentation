@@ -1,6 +1,6 @@
 # 07 — ĐẶC TẢ ỨNG DỤNG TÀI XẾ
 
-## 1. Driver journey
+## 1. Hành trình của tài xế
 
 ```mermaid
 stateDiagram-v2
