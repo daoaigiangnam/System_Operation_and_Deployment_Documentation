@@ -1,6 +1,6 @@
 # 11 — KIẾN TRÚC, YÊU CẦU PHI CHỨC NĂNG VÀ BẢO MẬT
 
-## 1. Logical architecture
+## 1. Kiến trúc logic
 
 ![System context](./assets/01-system-context.svg)
 
