@@ -1,29 +1,29 @@
 # 03 — CÁC QUY TRÌNH NGHIỆP VỤ ĐẦU CUỐI
 
-## 1. Booking → Dispatch → Trip → Payment
+## 1. Đặt xe → Điều phối → Chuyến đi → Thanh toán
 
 ```mermaid
 flowchart TD
- A["Customer / Hotline / App / Web / API"] --> B["Create booking"]
- B --> C{"Validation passed?"}
- C -- No --> C1["Field errors; retain entered data"]
+ A["Khách hàng / Tổng đài / Ứng dụng / Web / API"] --> B["Tạo booking"]
+ B --> C{"Dữ liệu hợp lệ?"}
+ C -- Không --> C1["Báo lỗi trường dữ liệu; giữ nội dung đã nhập"]
  C1 --> B
- C -- Yes --> D["CONFIRMED / READY_FOR_DISPATCH"]
- D --> E["Dispatch candidate search"]
- E --> F{"Eligible candidate?"}
- F -- No --> G["Exception queue / Supervisor"]
+ C -- Có --> D["CONFIRMED / READY_FOR_DISPATCH"]
+ D --> E["Tìm ứng viên điều phối"]
+ E --> F{"Có ứng viên đủ điều kiện?"}
+ F -- Không --> G["Hàng đợi ngoại lệ / Giám sát"]
  G --> E
- F -- Yes --> H["Driver offer"]
- H --> I{"Accept before expiry?"}
- I -- No --> E
- I -- Yes --> J["ASSIGNED"]
+ F -- Có --> H["Gửi lời mời tài xế"]
+ H --> I{"Chấp nhận trước khi hết hạn?"}
+ I -- Không --> E
+ I -- Có --> J["ASSIGNED"]
  J --> K["EN_ROUTE_TO_PICKUP"]
  K --> L["ARRIVED"]
  L --> M["IN_TRIP"]
  M --> N["COMPLETED"]
- N --> O["Fare finalization"]
- O --> P["Payment / Ledger"]
- P --> Q["Reporting / CS / Settlement"]
+ N --> O["Chốt cước"]
+ O --> P["Thanh toán / Sổ cái"]
+ P --> Q["Báo cáo / CSKH / Đối soát"]
 ```
 
 ## 2. Booking tức thời — Tổng đài
@@ -53,7 +53,7 @@ stateDiagram-v2
 
 Lead-time, cutoff và xử lý booking không có xe là TBD. Không tự hủy booking khi thiếu nguồn lực.
 
-## 4. Dispatch offer lifecycle
+## 4. Vòng đời lời mời điều phối
 
 ```mermaid
 sequenceDiagram
@@ -78,7 +78,7 @@ sequenceDiagram
 
 Ranking weights, DIRECT/PARTNER priority, radius, timeout and retry count are TBD.
 
-## 5. Trip state machine
+## 5. Máy trạng thái chuyến đi
 
 ```mermaid
 stateDiagram-v2
@@ -98,7 +98,7 @@ stateDiagram-v2
 
 Server validates every transition. Events store event ID, actor, server time, device time, source and reason.
 
-## 6. Reassignment
+## 6. Phân xe lại
 
 - Check booking/trip state and dispatcher permission.
 - Require reason (vehicle fault, driver reject, GPS issue, customer request, dispatcher action, other).
@@ -107,7 +107,7 @@ Server validates every transition. Events store event ID, actor, server time, de
 - Recalculate ETA and notify customer/operations according to policy.
 - Preserve before/after and actor in audit.
 
-## 7. Exception workflows
+## 7. Quy trình xử lý ngoại lệ
 
 | Case | Evidence | Result |
 |---|---|---|
@@ -118,7 +118,7 @@ Server validates every transition. Events store event ID, actor, server time, de
 | SOS | Timestamp, location, trip, acknowledgement | High-severity incident |
 | Payment exception | Provider ref, callback, status | Finance queue |
 
-## 8. Partner settlement
+## 8. Đối soát đối tác
 
 ```mermaid
 flowchart LR
@@ -138,6 +138,6 @@ flowchart LR
 
 After LOCKED, use a linked adjustment batch instead of changing historical ledger lines.
 
-## 9. Minimum audit events
+## 9. Các sự kiện kiểm toán tối thiểu
 
 BOOKING_CREATED/CONFIRMED/UPDATED/CANCELLED; DISPATCH_SEARCH_STARTED; DRIVER_OFFERED/ACCEPTED/REJECTED/EXPIRED; VEHICLE_ASSIGNED/REASSIGNED; DRIVER_EN_ROUTE/ARRIVED; TRIP_STARTED/COMPLETED/CANCELLED/NO_SHOW; FARE_CALCULATED; PAYMENT_INITIATED/SUCCEEDED/FAILED/REFUNDED; INCIDENT_CREATED/ACKNOWLEDGED/RESOLVED; SETTLEMENT_CALCULATED/APPROVED/LOCKED/PAID.
