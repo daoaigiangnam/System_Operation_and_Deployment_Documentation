@@ -1,6 +1,6 @@
 # 08 — TÍNH CƯỚC, THANH TOÁN VÀ ĐỐI SOÁT
 
-## 1. Fare calculation model
+## 1. Mô hình tính cước
 
 A fare is reproducible and stores tariff_version_id, effective timestamp, distance/time inputs and source, base fare, distance component, time component, approved surcharges, discounts, taxes/rounding where applicable, total, currency, engine version and calculation timestamp.
 
