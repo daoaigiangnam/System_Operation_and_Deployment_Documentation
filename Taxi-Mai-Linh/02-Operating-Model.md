@@ -1,4 +1,4 @@
-# 02 — OPERATING MODEL: DIRECT & PARTNER
+# 02 — MÔ HÌNH VẬN HÀNH: DIRECT VÀ PARTNER
 
 ## 1. Nguyên tắc
 

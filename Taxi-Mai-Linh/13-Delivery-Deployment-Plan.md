@@ -1,4 +1,4 @@
-# 13 — DELIVERY & DEPLOYMENT PLAN
+# 13 — KẾ HOẠCH PHÁT TRIỂN VÀ TRIỂN KHAI
 
 ## 1. Workstreams
 

@@ -1,4 +1,4 @@
-# 12 — QA, UAT & ACCEPTANCE
+# 12 — KIỂM THỬ, NGHIỆM THU NGƯỜI DÙNG VÀ CHẤP NHẬN
 
 ## 1. Test strategy
 

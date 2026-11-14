@@ -1,4 +1,4 @@
-# 05 — UI/UX SPECIFICATION
+# 05 — ĐẶC TẢ GIAO DIỆN VÀ TRẢI NGHIỆM NGƯỜI DÙNG
 
 ## 1. Experience goals
 

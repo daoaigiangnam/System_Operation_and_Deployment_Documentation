@@ -1,4 +1,4 @@
-# 04 — SOFTWARE REQUIREMENTS SPECIFICATION (SRS)
+# 04 — ĐẶC TẢ YÊU CẦU PHẦN MỀM (SRS)
 
 ## 1. Requirement convention
 

@@ -1,4 +1,4 @@
-# 14 — OPERATIONS & RUNBOOKS
+# 14 — VẬN HÀNH VÀ SỔ TAY XỬ LÝ SỰ CỐ
 
 ## 1. Support model
 

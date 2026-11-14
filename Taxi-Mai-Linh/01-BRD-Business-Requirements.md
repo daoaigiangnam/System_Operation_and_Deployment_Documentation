@@ -1,4 +1,4 @@
-# 01 — BUSINESS REQUIREMENT DOCUMENT (BRD)
+# 01 — TÀI LIỆU YÊU CẦU NGHIỆP VỤ (BRD)
 
 ## 1. Bối cảnh và vấn đề
 
