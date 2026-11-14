@@ -1,19 +1,19 @@
-# API Contracts & Examples
-**Contract style:** REST/JSON for synchronous commands and queries; asynchronous domain events for integration. Exact base URL, auth provider and gateway are TBD.
+# 20 — HỢP ĐỒNG API VÀ VÍ DỤ TÍCH HỢP
+**Kiểu hợp đồng:** REST/JSON cho lệnh và truy vấn đồng bộ; sự kiện nghiệp vụ bất đồng bộ cho tích hợp. Địa chỉ API gốc, nhà cung cấp xác thực và cổng API đang TBD.
 
-## 1. Common conventions
-- Prefix: /api/v1
-- Content-Type: application/json; UTF-8.
-- Authentication: OAuth2/OIDC access token (provider TBD); service-to-service identity for internal calls.
-- Every mutating request includes Idempotency-Key.
-- Every request propagates X-Correlation-ID.
-- Timestamps use ISO 8601 UTC; store UTC, render in configured local timezone.
-- Money uses integer minor units plus ISO currency code; never binary floating point.
-- Coordinates use WGS84 latitude/longitude with explicit validation.
-- Pagination uses cursor; sort order must be stable.
-- Error envelope: code, message, details, correlation_id, retryable.
+## 1. Quy ước chung
+- Tiền tố: `/api/v1`.
+- Kiểu nội dung: `application/json; UTF-8`.
+- Xác thực: access token OAuth2/OIDC (nhà cung cấp TBD); định danh dịch vụ-dịch vụ cho lời gọi nội bộ.
+- Mọi yêu cầu làm thay đổi dữ liệu phải có `Idempotency-Key`.
+- Mọi yêu cầu truyền tiếp `X-Correlation-ID`.
+- Thời gian dùng ISO 8601 UTC; lưu UTC, hiển thị theo múi giờ địa phương đã cấu hình.
+- Tiền lưu bằng số nguyên đơn vị nhỏ nhất và mã tiền tệ ISO; không dùng số thực nhị phân.
+- Tọa độ dùng hệ WGS84 latitude/longitude và phải kiểm tra hợp lệ.
+- Phân trang bằng cursor; thứ tự sắp xếp phải ổn định.
+- Cấu trúc lỗi gồm: code, message, details, correlation_id, retryable.
 
-## 2. Error envelope
+## 2. Cấu trúc phản hồi lỗi
 ```json
 {
   "error": {
@@ -25,9 +25,9 @@
   }
 }
 ```
-Do not expose stack traces, SQL errors, secrets or internal hostnames.
+Không trả về stack trace, lỗi SQL, bí mật hoặc tên máy chủ nội bộ. Các giá trị kỹ thuật trong JSON giữ nguyên để bảo đảm tương thích máy-máy.
 
-## 3. Create booking
+## 3. Tạo booking
 `POST /api/v1/bookings`
 ```json
 {
@@ -41,34 +41,34 @@ Do not expose stack traces, SQL errors, secrets or internal hostnames.
   "notes": null
 }
 ```
-Response: 201 with booking_id, public_reference, state, created_at, version. Fleet type is not supplied by channel and is decided by eligibility/dispatch policy.
+Phản hồi: HTTP 201 cùng booking_id, public_reference, state, created_at, version. Kênh đặt không truyền loại đội xe; loại đội xe được xác định bởi điều kiện nguồn xe/chính sách điều phối.
 
-## 4. Quote fare
+## 4. Tính báo giá
 `POST /api/v1/quotes`
-Request: booking_id, pickup, dropoff, service_class, optional route_distance/duration only if sourced from trusted routing service. Response: quote_id, currency, estimated_amount_minor, breakdown[], tariff_version_id, valid_until, assumptions[].
-A quote is an estimate unless policy explicitly marks it guaranteed.
+Yêu cầu: booking_id, pickup, dropoff, service_class; route_distance/duration chỉ được dùng nếu lấy từ dịch vụ định tuyến đáng tin cậy. Phản hồi: quote_id, currency, estimated_amount_minor, breakdown[], tariff_version_id, valid_until, assumptions[].
+Báo giá chỉ là ước tính, trừ khi chính sách quy định rõ là giá bảo đảm.
 
-## 5. Start dispatch
+## 5. Bắt đầu điều phối
 `POST /api/v1/bookings/{booking_id}/dispatch`
-Request: policy_version, mode (AUTO|MANUAL), optional operator_note. Response: dispatch_id, state, attempt_no, candidate_count, created_at.
+Yêu cầu: policy_version, mode (AUTO|MANUAL), operator_note không bắt buộc. Phản hồi: dispatch_id, state, attempt_no, candidate_count, created_at.
 
-## 6. Driver offer response
+## 6. Tài xế phản hồi lời mời
 `POST /api/v1/offers/{offer_id}/response`
-Request: response (ACCEPT|DECLINE), reason_code. Response: offer state, booking state, assignment_id if accepted. Server validates expiry, eligibility and concurrency atomically.
+Yêu cầu: response (ACCEPT|DECLINE), reason_code. Phản hồi: trạng thái lời mời, trạng thái booking, assignment_id nếu chấp nhận. Máy chủ kiểm tra đồng thời hạn lời mời, điều kiện và xung đột phân xe.
 
-## 7. Trip milestone
+## 7. Cập nhật mốc chuyến
 `POST /api/v1/trips/{trip_id}/milestones`
-Request: milestone (EN_ROUTE|ARRIVED|STARTED|COMPLETED), occurred_at, location, odometer optional, evidence references optional. Server records received_at separately from occurred_at. Device time is untrusted.
+Yêu cầu: milestone (EN_ROUTE|ARRIVED|STARTED|COMPLETED), occurred_at, location, odometer tùy chọn, tham chiếu bằng chứng tùy chọn. Máy chủ lưu riêng received_at và occurred_at; không mặc nhiên tin thời gian trên thiết bị.
 
-## 8. Payment record
+## 8. Ghi nhận thanh toán
 `POST /api/v1/payments`
-Request: trip_id, method, amount_minor, currency, provider_reference optional, idempotency_key. Response: payment_id, status, amount_minor, currency. Provider callback is a separate authenticated endpoint.
+Yêu cầu: trip_id, method, amount_minor, currency, provider_reference tùy chọn, idempotency_key. Phản hồi: payment_id, status, amount_minor, currency. Callback của nhà cung cấp đi qua endpoint riêng có xác thực.
 
-## 9. Partner settlement
+## 9. Duyệt đối soát đối tác
 `POST /api/v1/partner-settlements/{settlement_id}/approve`
-Request: approval_note, statement_version. Only authorized Finance role; approval checks statement totals, disputes and duplicate approval.
+Yêu cầu: approval_note, statement_version. Chỉ vai trò Tài chính được cấp quyền mới thực hiện; khi duyệt phải kiểm tra tổng bảng kê, tranh chấp và việc duyệt trùng.
 
-## 10. Webhook/event envelope
+## 10. Cấu trúc sự kiện/webhook
 ```json
 {
   "event_id": "uuid",
@@ -81,22 +81,22 @@ Request: approval_note, statement_version. Only authorized Finance role; approva
   "data": {}
 }
 ```
-Consumers deduplicate by event_id and reject stale aggregate versions where ordering matters.
+Bên nhận chống trùng theo event_id và từ chối phiên bản aggregate cũ nếu thứ tự sự kiện có ý nghĩa.
 
-## 11. Initial endpoint inventory
-| Domain | Endpoint | Permission |
+## 11. Danh mục endpoint ban đầu
+| Miền | Endpoint | Quyền |
 |---|---|---|
-| Booking | POST/GET /bookings | booking:create/read |
-| Booking | POST /bookings/{id}/cancel | booking:cancel |
-| Pricing | POST /quotes | quote:create |
-| Dispatch | POST /bookings/{id}/dispatch | dispatch:execute |
-| Dispatch | GET /dispatch/queue | dispatch:read |
-| Dispatch | POST /offers/{id}/response | driver:offer-response |
-| Trip | POST /trips/{id}/milestones | trip:update |
-| Payment | POST /payments | payment:create |
-| Finance | GET /ledger/entries | finance:read |
-| Settlement | GET /partner-settlements | settlement:read |
-| Settlement | POST /partner-settlements/{id}/approve | settlement:approve |
+| Đặt xe | POST/GET /bookings | booking:create/read |
+| Đặt xe | POST /bookings/{id}/cancel | booking:cancel |
+| Định giá | POST /quotes | quote:create |
+| Điều phối | POST /bookings/{id}/dispatch | dispatch:execute |
+| Điều phối | GET /dispatch/queue | dispatch:read |
+| Điều phối | POST /offers/{id}/response | driver:offer-response |
+| Chuyến đi | POST /trips/{id}/milestones | trip:update |
+| Thanh toán | POST /payments | payment:create |
+| Tài chính | GET /ledger/entries | finance:read |
+| Đối soát | GET /partner-settlements | settlement:read |
+| Đối soát | POST /partner-settlements/{id}/approve | settlement:approve |
 
-## 12. Contract completion checklist
-Before implementation freeze: OpenAPI 3.1 file, schemas, enum registry, auth scopes, rate limits, PII classification, error catalogue, pagination, idempotency retention, webhook signature/replay protection, versioning and backward compatibility tests.
+## 12. Danh sách cần hoàn thiện trước khi khóa hợp đồng
+Tạo OpenAPI 3.1, lược đồ dữ liệu, danh mục enum, phạm vi quyền xác thực, giới hạn tần suất, phân loại dữ liệu cá nhân, danh mục lỗi, phân trang, thời hạn lưu khóa chống trùng, chữ ký/chống phát lại webhook, quản lý phiên bản và kiểm thử tương thích ngược.
