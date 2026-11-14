@@ -14,7 +14,7 @@
 | QA | Test plan, automation, UAT | QA Lead |
 | IT Ops | CI/CD, monitoring, backup, DR, runbooks | IT Ops |
 
-## 2. Phased delivery
+## 2. Triển khai theo giai đoạn
 
 | Phase | Deliverable | Exit gate |
 |---|---|---|
@@ -28,7 +28,7 @@
 
 Timeline and staffing require sizing; phases are not calendar commitments.
 
-## 3. Environments
+## 3. Các môi trường
 
 | Environment | Purpose | Data |
 |---|---|---|
@@ -38,15 +38,15 @@ Timeline and staffing require sizing; phases are not calendar commitments.
 | STAGING | Release rehearsal | Production-like, masked |
 | PROD | Live operation | Controlled production |
 
-## 4. CI/CD controls
+## 4. Kiểm soát quy trình CI/CD
 
 Reproducible builds; dependency pinning; unit/lint/static/secret/dependency scans; artifact promotion between environments; production approval; backward-compatible DB migration; rollback plan; release notes; secrets outside repository.
 
-## 5. Data migration
+## 5. Chuyển đổi dữ liệu
 
 Inventory sources; profile quality; map fields; resolve duplicate identities; normalize phone/plate/timezone; map DIRECT/PARTNER and contract periods; dry run; exception report; final delta migration; count/balance reconciliation; sampling; business sign-off; rollback snapshot.
 
-## 6. Cutover checklist
+## 6. Danh sách kiểm tra chuyển hệ thống
 
 - Change freeze and stakeholder communication.
 - Backup and restore point verified.
@@ -59,6 +59,6 @@ Inventory sources; profile quality; map fields; resolve duplicate identities; no
 - Go/no-go by sponsor, Operations, Finance and IT.
 - Rollback triggers/authority confirmed.
 
-## 7. Rollback triggers
+## 7. Điều kiện kích hoạt quay lui
 
 Examples: booking/dispatch unavailable beyond tolerance; duplicate/lost trip events; financial variance; security/privacy incident; GPS/Driver App degradation unsafe for operations. Thresholds must be approved. Rollback must account for external payment/events, not database restore alone.
