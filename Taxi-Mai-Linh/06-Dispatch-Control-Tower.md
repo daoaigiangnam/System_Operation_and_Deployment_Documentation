@@ -1,6 +1,6 @@
 # 06 — ĐIỀU PHỐI VÀ TRUNG TÂM ĐIỀU HÀNH
 
-## 1. Dispatch pipeline
+## 1. Quy trình điều phối
 
 ```mermaid
 flowchart TD
